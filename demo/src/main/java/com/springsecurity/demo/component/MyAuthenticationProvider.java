@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * @date 2020/10/19
  * @desc
  */
-@Component
+//@Component
 public class MyAuthenticationProvider extends DaoAuthenticationProvider {
 
     /*@Autowired

@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,11 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> myWebAuthenticationDetailsSource;
+    /*@Autowired
+    private AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> myWebAuthenticationDetailsSource;*/
+
+    /*@Autowired
+    private MyAuthenticationProvider myAuthenticationProvider;*/
 
     @Autowired
-    private MyAuthenticationProvider myAuthenticationProvider;
+    private UserDetailsService userDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -35,21 +39,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .formLogin()
-                .authenticationDetailsSource(this.myWebAuthenticationDetailsSource)
-                .loginPage("/myLogin.html").loginProcessingUrl("/auth/form").permitAll()
-        .failureHandler(new MyAuthenticationFailureHandler());
+                //.authenticationDetailsSource(this.myWebAuthenticationDetailsSource)
+                //.loginPage("/myLogin.html").loginProcessingUrl("/auth/form").permitAll()
+                //.failureHandler(new MyAuthenticationFailureHandler())
+        .and()
+        .rememberMe().userDetailsService(userDetailsService).key("test")
+        ;
 
         //http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
-    @Override
+    /*@Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        /*PasswordEncoder passwordEncoder=PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        *//*PasswordEncoder passwordEncoder=PasswordEncoderFactories.createDelegatingPasswordEncoder();
         String password=passwordEncoder.encode("123");
         auth.inMemoryAuthentication()
                 .withUser("user").password(password).roles("USER")
                 .and()
-                .withUser("admin").password(password).roles("ADMIN");*/
+                .withUser("admin").password(password).roles("ADMIN");*//*
         auth.authenticationProvider(this.myAuthenticationProvider);
-    }
+    }*/
 }

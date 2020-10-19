@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2020/10/19
  * @desc
  */
-@Component
+//@Component
 public class MyWebAuthenticationDetailsSource implements AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> {
 
     @Override
