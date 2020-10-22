@@ -26,8 +26,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     /*@Autowired
     private MyAuthenticationProvider myAuthenticationProvider;*/
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    /*@Autowired
+    private UserDetailsService userDetailsService;*/
+
+    /*@Autowired
+    private SpringSessionBackedSessionRegistry redisSessionRegistry;*/
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -43,7 +46,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //.loginPage("/myLogin.html").loginProcessingUrl("/auth/form").permitAll()
                 //.failureHandler(new MyAuthenticationFailureHandler())
         .and()
-        .rememberMe().userDetailsService(userDetailsService).key("test")
+        //.rememberMe().userDetailsService(userDetailsService).key("test")
+        .sessionManagement().maximumSessions(1).maxSessionsPreventsLogin(true)
+                //.sessionRegistry(redisSessionRegistry)
         ;
 
         //http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);
