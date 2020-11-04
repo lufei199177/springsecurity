@@ -9,6 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.csrf.LazyCsrfTokenRepository;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -40,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/app/api/**","/captcha.jpg").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .csrf().disable()
+                .csrf().csrfTokenRepository(new LazyCsrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())).and()
                 .formLogin()
                 //.authenticationDetailsSource(this.myWebAuthenticationDetailsSource)
                 //.loginPage("/myLogin.html").loginProcessingUrl("/auth/form").permitAll()
