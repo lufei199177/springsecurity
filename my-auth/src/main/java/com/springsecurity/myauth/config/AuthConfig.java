@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 
@@ -16,6 +17,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
  * @desc
  */
 @Configuration
+@EnableAuthorizationServer
 public class AuthConfig extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
@@ -34,7 +36,8 @@ public class AuthConfig extends AuthorizationServerConfigurerAdapter {
                 .authorizedGrantTypes(AuthorizedGrantTypesEnum.authorization_code.getName())
                 .redirectUris("http://localhost:9177/login/oauth2/code/authorizationServer")
                 .resourceIds("my-resource")
-                .scopes("query");
+                .scopes("query")
+        ;
     }
 
     @Override

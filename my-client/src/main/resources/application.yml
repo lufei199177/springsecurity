@@ -9,14 +9,14 @@ spring:
         provider:
           myProvider:
             authorizationUri: http://localhost:9178/oauth/authorize
-            tokenUri: http://localhost:9178/oauth/token
-            #userInfoUri:
+            tokenUri: http://localhost:9178/oauth/check_token
+            userInfoUri: http://localhost:9178/user
             #userInfoAuthenticationMethod:
             #userNameAttribute:
             #jwkSetUri:
             #issuerUri:
         registration:
-          myRegistration
+          myRegistration:
             provider: myProvider
             clientId: my-clientId
             clientSecret: 123456
