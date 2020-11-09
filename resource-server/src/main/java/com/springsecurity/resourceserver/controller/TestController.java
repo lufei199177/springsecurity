@@ -17,4 +17,9 @@ public class TestController {
     public Principal me(Principal principal){
         return principal;
     }
+
+    @GetMapping("/test")
+    public String test(){
+        return "测试成功!";
+    }
 }
