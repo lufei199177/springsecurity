@@ -2,9 +2,14 @@ package com.springsecurity.oauthclient.controller;
 
 import com.springsecurity.oauthclient.config.AuthConfig;
 import com.springsecurity.oauthclient.model.AuthToken;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -25,13 +30,36 @@ public class TestController {
 
     @GetMapping("/test")
     public String test(HttpServletRequest request,HttpServletResponse response) throws IOException {
-        String sessionId=request.getRequestedSessionId();
+        String sessionId=null;
+        for(Cookie c:request.getCookies()){
+            if("user_info".equals(c.getName())){
+                sessionId=c.getValue();
+                break;
+            }
+        }
         AuthToken authToken= AuthConfig.getToken(sessionId);
         if(authToken==null){
             AuthConfig.addUrl(sessionId,"/test");
             response.sendRedirect("/authorize");
             return null;
         }
-        return "test";
+
+        /*MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        parameters.add("access_token", authToken.getAccess_token());
+        parameters.add("grant_type", AuthConfig.authorizationGrantType);
+        parameters.add("scope", AuthConfig.scope);
+        parameters.add("client_id", AuthConfig.clientId);*/
+
+        HttpHeaders httpHeaders=new HttpHeaders();
+        httpHeaders.set("Authorization","Bearer "+authToken.getAccess_token());
+
+        HttpEntity<MultiValueMap<String, String>> httpEntity=new HttpEntity<>(httpHeaders);
+
+        RestTemplate restTemplate=new RestTemplate();
+        String sb = AuthConfig.resourceUri;
+
+        ResponseEntity<String> responseEntity= restTemplate.exchange(sb, HttpMethod.GET,httpEntity, String.class);
+
+        return responseEntity.getBody();
     }
 }

@@ -24,8 +24,13 @@ public class TestController {
         return "这是admin页";
     }
 
-    @GetMapping("/user")
+    /*@GetMapping("/user")
     public String user(){
         return "这是user页";
+    }*/
+
+    @GetMapping("/me")
+    public Principal me(Principal principal){
+        return principal;
     }
 }

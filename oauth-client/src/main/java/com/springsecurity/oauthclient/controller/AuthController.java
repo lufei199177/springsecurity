@@ -23,19 +23,20 @@ import java.io.IOException;
 @RestController
 public class AuthController {
 
-    private static final String authorizationUri= "http://localhost:8081/oauth/authorize";
-    private static final String tokenUri= "http://localhost:8081/oauth/token";
-    private static final String clientId= "client-for-server";
-    private static final String clientSecret="client-for-server";
-    private static final String authorizationGrantType= "authorization_code";
-    private static final String redirectUri= "http://localhost:8080/login/oauth2/code/authorization";
-    private static final String scope= "email";
-
     @GetMapping("/authorize")
     public void authorize(HttpServletRequest request,HttpServletResponse response) throws IOException {
-        Cookie cookie=new Cookie("user_info",request.getSession().getId());
-        response.addCookie(cookie);
-        String url=authorizationUri+"?client_id="+clientId+"&redirect_uri="+redirectUri+"&response_type=code";
+        Cookie cookie=null;
+        for(Cookie c:request.getCookies()){
+            if("user_info".equals(c.getName())){
+                cookie=c;
+                break;
+            }
+        }
+        if(cookie==null){
+            cookie=new Cookie("user_info",request.getSession().getId());
+            response.addCookie(cookie);
+        }
+        String url=AuthConfig.authorizationUri+"?client_id="+AuthConfig.clientId+"&redirect_uri="+AuthConfig.redirectUri+"&response_type=code";
         response.sendRedirect(url);
     }
 
@@ -45,20 +46,20 @@ public class AuthController {
         String code=request.getParameter("code");
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("code", code);
-        parameters.add("grant_type", authorizationGrantType);
-        parameters.add("scope", scope);
-        parameters.add("redirect_uri",redirectUri);
+        parameters.add("grant_type", AuthConfig.authorizationGrantType);
+        parameters.add("scope", AuthConfig.scope);
+        parameters.add("redirect_uri",AuthConfig.redirectUri);
 
         HttpHeaders httpHeaders=new HttpHeaders();
         String cookie=request.getHeader("cookie");
         httpHeaders.add("Cookie",cookie);
         httpHeaders.set("Content-Type",MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        httpHeaders.setBasicAuth(clientId,clientSecret);
+        httpHeaders.setBasicAuth(AuthConfig.clientId,AuthConfig.clientSecret);
 
         HttpEntity<MultiValueMap<String, String>> httpEntity=new HttpEntity<>(parameters,httpHeaders);
 
         RestTemplate restTemplate=new RestTemplate();
-        ResponseEntity<AuthToken> responseEntity= restTemplate.exchange(tokenUri, HttpMethod.POST,httpEntity, AuthToken.class);
+        ResponseEntity<AuthToken> responseEntity= restTemplate.exchange(AuthConfig.tokenUri, HttpMethod.POST,httpEntity, AuthToken.class);
         AuthToken authToken=responseEntity.getBody();
         if(authToken!=null){
             authToken.setCreateTime(System.currentTimeMillis());
@@ -74,7 +75,6 @@ public class AuthController {
             if(sessionId!=null){
                 AuthConfig.addToken(sessionId,authToken);
                 String url= AuthConfig.getUrl(sessionId);
-                response.addCookie(new Cookie("JSESSIONID",sessionId));
                 response.sendRedirect(url);
             }
         }
