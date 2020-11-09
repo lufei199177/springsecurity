@@ -7,21 +7,21 @@ spring:
     oauth2:
       client:
         provider:
-          myProvider:
+          authorizationserver:
             authorizationUri: http://localhost:9178/oauth/authorize
-            tokenUri: http://localhost:9178/oauth/check_token
-            userInfoUri: http://localhost:9178/user
+            tokenUri: http://localhost:9178/oauth/token
+            userInfoUri: http://localhost:9178/me
             #userInfoAuthenticationMethod:
-            #userNameAttribute:
+            userNameAttribute: "name"
             #jwkSetUri:
             #issuerUri:
         registration:
-          myRegistration:
-            provider: myProvider
+          authorizationserver:
+            provider: authorizationserver
             clientId: my-clientId
             clientSecret: 123456
-            #clientAuthenticationMethod:
+            clientAuthenticationMethod: basic
             authorizationGrantType: authorization_code
-            redirectUri: http://localhost:9177/login/oauth2/code/authorizationServer
-            scope: query
+            redirectUri: http://localhost:9177/login/oauth2/code/authorizationserver
+            scope: profile,email,phone
             #clientName:

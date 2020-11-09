@@ -3,7 +3,6 @@ package com.springsecurity.myauth.config;
 import com.springsecurity.myauth.constant.AuthorizedGrantTypesEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -32,11 +31,12 @@ public class AuthConfig extends AuthorizationServerConfigurerAdapter {
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
                 .withClient("my-clientId")
-                .secret(this.passwordEncoder.encode("123456"))
+                .secret(passwordEncoder.encode("123456"))
                 .authorizedGrantTypes(AuthorizedGrantTypesEnum.authorization_code.getName())
-                .redirectUris("http://localhost:9177/login/oauth2/code/authorizationServer")
+                .redirectUris("http://localhost:9177/login/oauth2/code/authorizationserver")
                 .resourceIds("my-resource")
-                .scopes("query")
+                .scopes("profile","email","phone")
+                .authorities("ROLE_CLIENT")
         ;
     }
 
