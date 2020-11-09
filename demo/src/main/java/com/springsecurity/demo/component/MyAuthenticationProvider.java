@@ -8,7 +8,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
 /**
  * @author lufei
@@ -21,7 +20,7 @@ public class MyAuthenticationProvider extends DaoAuthenticationProvider {
     /*@Autowired
     private UserDetailsService userDetailsService;*/
 
-    public MyAuthenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder){
+    public MyAuthenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         this.setUserDetailsService(userDetailsService);
         this.setPasswordEncoder(passwordEncoder);
     }
@@ -40,13 +39,13 @@ public class MyAuthenticationProvider extends DaoAuthenticationProvider {
                 throw new BadCredentialsException(this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials","密码错误!"));
             }
         }*/
-        MyWebAuthenticationDetails details=(MyWebAuthenticationDetails)usernamePasswordAuthenticationToken.getDetails();
+        MyWebAuthenticationDetails details = (MyWebAuthenticationDetails) usernamePasswordAuthenticationToken.getDetails();
         //验证码不正确，抛异常
-        if(!details.isImageCodeIsRight()){
+        if (!details.isImageCodeIsRight()) {
             throw new MyAuthenticationException();
         }
         //调用父类方法完成验证
-        super.additionalAuthenticationChecks(userDetails,usernamePasswordAuthenticationToken);
+        super.additionalAuthenticationChecks(userDetails, usernamePasswordAuthenticationToken);
     }
 
     /*@Override

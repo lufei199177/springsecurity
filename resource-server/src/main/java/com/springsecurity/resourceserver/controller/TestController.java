@@ -14,7 +14,12 @@ import java.security.Principal;
 public class TestController {
 
     @GetMapping("/me")
-    public Principal me(Principal principal){
-        return principal;
+    public String me(Principal principal) {
+        return "访问resource成功:" + principal.getName();
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return "测试成功!";
     }
 }

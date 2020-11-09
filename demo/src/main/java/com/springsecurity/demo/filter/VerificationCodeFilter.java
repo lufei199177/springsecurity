@@ -21,35 +21,35 @@ import java.io.IOException;
  */
 public class VerificationCodeFilter extends OncePerRequestFilter {
 
-    private final AuthenticationFailureHandler authenticationFailureHandler=new MyAuthenticationFailureHandler();
+    private final AuthenticationFailureHandler authenticationFailureHandler = new MyAuthenticationFailureHandler();
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String uri=httpServletRequest.getRequestURI();
+        String uri = httpServletRequest.getRequestURI();
         //非登录请求不校验验证码
-        if("/auth/form".equals(uri)){
-            try{
+        if ("/auth/form".equals(uri)) {
+            try {
                 this.verificationCode(httpServletRequest);
-                filterChain.doFilter(httpServletRequest,httpServletResponse);
-            }catch (AuthenticationException e){
+                filterChain.doFilter(httpServletRequest, httpServletResponse);
+            } catch (AuthenticationException e) {
                 //e.printStackTrace();
-                authenticationFailureHandler.onAuthenticationFailure(httpServletRequest,httpServletResponse,e);
+                authenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, e);
             }
-        }else{
-            filterChain.doFilter(httpServletRequest,httpServletResponse);
+        } else {
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
 
     }
 
     public void verificationCode(HttpServletRequest request) throws AuthenticationException {
-        String requestCode=request.getParameter("captcha");
-        HttpSession session=request.getSession();
-        String saveCode= (String) session.getAttribute("captcha");
-        if(!StringUtils.isEmpty(saveCode)){
+        String requestCode = request.getParameter("captcha");
+        HttpSession session = request.getSession();
+        String saveCode = (String) session.getAttribute("captcha");
+        if (!StringUtils.isEmpty(saveCode)) {
             session.removeAttribute("captcha");
         }
-        if(StringUtils.isEmpty(requestCode)||StringUtils.isEmpty(saveCode)||!requestCode.equals(saveCode)){
+        if (StringUtils.isEmpty(requestCode) || StringUtils.isEmpty(saveCode) || !requestCode.equals(saveCode)) {
             throw new MyAuthenticationException();
         }
     }

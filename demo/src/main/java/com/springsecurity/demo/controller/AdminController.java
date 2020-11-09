@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
 
     @GetMapping("/hello")
-    public String hello(){
+    public String hello() {
         return "hello,admin";
     }
 }

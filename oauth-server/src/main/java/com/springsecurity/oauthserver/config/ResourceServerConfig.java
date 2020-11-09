@@ -1,11 +1,9 @@
-package com.springsecurity.myauth.config;
+package com.springsecurity.oauthserver.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 
 /**
  * @author lufei
@@ -16,20 +14,30 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
-    public static final String RESOURCE_ID="my-resource";
+    public static final String RESOURCE_ID = "authorizationServer";
 
-    @Override
+    /*@Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
         super.configure(resources);
-        resources.resourceId(RESOURCE_ID);
-    }
+    }*/
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
         //只有/me端点作为资源服务器的资源
-        http.requestMatchers().antMatchers("/me")
+        http.requestMatchers().antMatchers("/me", "/userInfo")
                 .and()
                 .authorizeRequests()
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+        ;
     }
+
+    /*@Override
+    public void configure(ResourceServerSecurityConfigurer resources)
+            throws Exception {
+        RemoteTokenServices tokenService = new RemoteTokenServices();
+        tokenService.setCheckTokenEndpointUrl("http://localhost:8081/oauth/check_token");
+        tokenService.setClientId("client-for-server");
+        tokenService.setClientSecret("client-for-server");
+        resources.tokenServices(tokenService);
+    }*/
 }

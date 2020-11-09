@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 
 /**
  * @author lufei
@@ -17,11 +17,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
  * @desc
  */
 @Configuration
-@EnableAuthorizationServer
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception{
+    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 .withUser("user").password(this.passwordEncoder().encode("user")).roles("USER")
                 .and()
@@ -29,19 +29,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception{
-        httpSecurity.authorizeRequests().antMatchers("/").permitAll().anyRequest().hasAnyRole("USER","ADMIN")
-                .and().formLogin();
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.authorizeRequests().antMatchers("/")
+                .permitAll().anyRequest().hasAnyRole("USER", "ADMIN")
+                .and()
+                .formLogin();
     }
 
     @Override
-    public void configure(WebSecurity webSecurity) throws Exception{
+    public void configure(WebSecurity webSecurity) throws Exception {
         super.configure(webSecurity);
         webSecurity.ignoring().antMatchers("/favicon.ico");
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

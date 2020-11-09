@@ -28,18 +28,18 @@ public class CaptchaController {
         //设置内容类型
         response.setContentType("image/jpg");
         //创建验证码文本
-        String capText=captchaProducer.createText();
+        String capText = captchaProducer.createText();
         //将验证码文本设置到session
-        request.getSession().setAttribute("captcha",capText);
+        request.getSession().setAttribute("captcha", capText);
         //创建验证码图片
-        BufferedImage bufferedImage=captchaProducer.createImage(capText);
+        BufferedImage bufferedImage = captchaProducer.createImage(capText);
         //获取响应输出流
-        ServletOutputStream outputStream=response.getOutputStream();
-        ImageIO.write(bufferedImage,"jpg",outputStream);
+        ServletOutputStream outputStream = response.getOutputStream();
+        ImageIO.write(bufferedImage, "jpg", outputStream);
 
-        try{
+        try {
             outputStream.flush();
-        }finally {
+        } finally {
             outputStream.close();
         }
     }

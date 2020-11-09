@@ -1,19 +1,10 @@
 package com.springsecurity.demo.config;
 
-import com.springsecurity.demo.component.MyAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationDetailsSource;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.csrf.LazyCsrfTokenRepository;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author lufei
@@ -40,7 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/admin/api/**").hasRole("ADMIN")
                 .antMatchers("/user/api/**").hasRole("USER")
-                .antMatchers("/app/api/**","/captcha.jpg").permitAll()
+                .antMatchers("/app/api/**", "/captcha.jpg").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().csrfTokenRepository(new LazyCsrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())).and()
@@ -48,10 +39,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //.authenticationDetailsSource(this.myWebAuthenticationDetailsSource)
                 //.loginPage("/myLogin.html").loginProcessingUrl("/auth/form").permitAll()
                 //.failureHandler(new MyAuthenticationFailureHandler())
-        .and()
-        //.rememberMe().userDetailsService(userDetailsService).key("test")
-        .sessionManagement().maximumSessions(1).maxSessionsPreventsLogin(true)
-                //.sessionRegistry(redisSessionRegistry)
+                .and()
+                //.rememberMe().userDetailsService(userDetailsService).key("test")
+                .sessionManagement().maximumSessions(1).maxSessionsPreventsLogin(true)
+        //.sessionRegistry(redisSessionRegistry)
         ;
 
         //http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
+import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 
 /**
  * @author lufei
@@ -27,21 +28,28 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 //client-server
                 .secret(this.passwordEncoder.encode("client-for-server"))
                 //授权类型
-                .authorizedGrantTypes("authorization_code","implicit")
+                .authorizedGrantTypes("authorization_code", "implicit")
                 //token有效时间
                 .accessTokenValiditySeconds(7200)
                 //token刷新时间
                 .refreshTokenValiditySeconds(72000)
                 //重定向url
-                .redirectUris("http://localhost:8080/login/oauth2/code/authorizationServer")
+                .redirectUris("http://localhost:8080/login/oauth2/code/authorization")
                 .additionalInformation()
                 //该client可以访问的资源服务器id
-                .resourceIds("authorizationServer")
+                //.resourceIds("authorizationServer")
                 //对client进行鉴权
-                .authorities("ROLE_CLIENT")
+                //.authorities("ROLE_CLIENT")
                 //该client可以访问的资源范围
-                .scopes("profile","email","phone","aaa")
-                //自动批准的范围
-                .autoApprove("profile");
+                .scopes("profile", "email", "phone", "aaa")
+        //自动批准的范围
+        //.autoApprove("profile")
+        ;
+    }
+
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+        // 配置前来验证token的client需要拥有的角色
+        security.checkTokenAccess("hasAuthority('ROLE_TRUSTED_CLIENT')");
     }
 }

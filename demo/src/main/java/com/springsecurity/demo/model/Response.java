@@ -15,7 +15,7 @@ public class Response {
     private Object data;
 
     @Override
-    public String toString(){
-        return "{msg:" + this.msg + ",code:" + this.code + ",data:" + (data == null ? null : data.toString())+"}";
+    public String toString() {
+        return "{msg:" + this.msg + ",code:" + this.code + ",data:" + (data == null ? null : data.toString()) + "}";
     }
 }

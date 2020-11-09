@@ -31,13 +31,13 @@ public class MyWebAuthenticationDetails extends WebAuthenticationDetails {
 
     public MyWebAuthenticationDetails(HttpServletRequest request) {
         super(request);
-        this.imageCode=request.getParameter("captcha");
-        HttpSession httpSession=request.getSession();
-        this.saveImageCode= (String) httpSession.getAttribute("captcha");
-        if(!StringUtils.isEmpty(saveImageCode)){
+        this.imageCode = request.getParameter("captcha");
+        HttpSession httpSession = request.getSession();
+        this.saveImageCode = (String) httpSession.getAttribute("captcha");
+        if (!StringUtils.isEmpty(saveImageCode)) {
             httpSession.removeAttribute("captcha");
-            if(!StringUtils.isEmpty(this.imageCode)&&this.imageCode.equals(this.saveImageCode)){
-                this.imageCodeIsRight=true;
+            if (!StringUtils.isEmpty(this.imageCode) && this.imageCode.equals(this.saveImageCode)) {
+                this.imageCodeIsRight = true;
             }
         }
     }

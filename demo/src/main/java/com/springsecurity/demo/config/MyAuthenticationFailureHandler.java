@@ -21,8 +21,8 @@ public class MyAuthenticationFailureHandler implements AuthenticationFailureHand
     @Override
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                         AuthenticationException e) throws IOException, ServletException {
-        String msg=e.getMessage();
-        Response response=new Response();
+        String msg = e.getMessage();
+        Response response = new Response();
         response.setCode(-1);
         response.setMsg(msg);
 
