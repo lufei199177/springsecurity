@@ -1,11 +1,14 @@
 package com.springsecurity.resourceserver.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 /**
  * @author lufei
@@ -17,6 +20,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     public static final String RESOURCE_ID = "authorizationServer";
+    @Autowired
+    private JwtAccessTokenConverter jwtAccessTokenConverter;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -31,6 +36,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(ResourceServerSecurityConfigurer resources)
             throws Exception {
+        resources.tokenStore(new JwtTokenStore(this.jwtAccessTokenConverter));
+
         String userInfoEndpointUrl = "http://localhost:8081/userInfo";
         //String clientId = null;
         UserInfoTokenServices tokenService = new UserInfoTokenServices(userInfoEndpointUrl, null);

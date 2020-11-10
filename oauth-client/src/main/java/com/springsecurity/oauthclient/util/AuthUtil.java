@@ -24,6 +24,11 @@ public class AuthUtil {
 
     public static final Map<String, AuthClient> AUTH_CLIENT_MAP = new HashMap<>();
 
+    static {
+        AuthClient authClient = new AuthClient("clientId001", "clientSecret001");
+        AUTH_CLIENT_MAP.put("user", authClient);
+    }
+
     private static final Map<String, String> URI_MAP = new HashMap<>();
     private static final Map<String, AuthToken> TOKEN_MAP = new HashMap<>();
 
