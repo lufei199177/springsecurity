@@ -7,6 +7,7 @@ import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -71,4 +72,10 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/addAuthClient/{clientId}/{clientSecret}")
+    public String addAuthClient(@PathVariable("clientId") String clientId, @PathVariable("clientSecret") String clientSecret, HttpServletRequest request) {
+        AuthClient authClient = new AuthClient(clientId, clientSecret);
+        AuthUtil.AUTH_CLIENT_MAP.put(request.getUserPrincipal().getName(), authClient);
+        return "添加成功!";
+    }
 }

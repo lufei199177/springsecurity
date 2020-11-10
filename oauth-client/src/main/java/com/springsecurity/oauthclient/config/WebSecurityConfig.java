@@ -1,7 +1,5 @@
 package com.springsecurity.oauthclient.config;
 
-import com.springsecurity.oauthclient.model.AuthClient;
-import com.springsecurity.oauthclient.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,8 +28,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     protected UserDetailsService userDetailsService() {
-        AuthUtil.AUTH_CLIENT_MAP.put("user", new AuthClient("test101", "test101"));
-        AuthUtil.AUTH_CLIENT_MAP.put("admin", new AuthClient("client-for-server", "client-for-server"));
         UserDetails user = new User("user", this.passwordEncoder.encode("123"), Collections.singleton(new SimpleGrantedAuthority("user")));
         UserDetails admin = new User("admin", this.passwordEncoder.encode("123"), Collections.singleton(new SimpleGrantedAuthority("admin")));
         return new InMemoryUserDetailsManager(user, admin);

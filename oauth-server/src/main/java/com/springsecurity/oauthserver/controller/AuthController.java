@@ -45,13 +45,13 @@ public class AuthController {
         return map;
     }
 
-    @GetMapping("/addClientDetail/{clientId}")
-    public String addClientDetail(@PathVariable("clientId") String clientId) {
+    @GetMapping("/addClientDetail/{clientId}/{clientSecret}")
+    public String addClientDetail(@PathVariable("clientId") String clientId, @PathVariable("clientSecret") String clientSecret) {
         String[] scopes = {"profile", "email", "phone", "aaa"};
 
         BaseClientDetails clientDetails = new BaseClientDetails();
         clientDetails.setClientId(clientId);
-        clientDetails.setClientSecret(this.passwordEncoder.encode(clientId));
+        clientDetails.setClientSecret(this.passwordEncoder.encode(clientSecret));
         clientDetails.setRegisteredRedirectUri(Collections.singleton("http://localhost:8080/login/oauth2/code/authorization"));
         clientDetails.setScope(Arrays.asList(scopes));
         clientDetails.setAuthorizedGrantTypes(Collections.singleton("authorization_code"));
