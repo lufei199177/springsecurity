@@ -51,6 +51,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         ;
     }
 
+    /**
+     * 使用jwt，如果不用，则把这个方法删掉，使用默认配置
+     * @param endpoints
+     * @throws Exception
+     */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.accessTokenConverter(this.jwtAccessTokenConverter);
