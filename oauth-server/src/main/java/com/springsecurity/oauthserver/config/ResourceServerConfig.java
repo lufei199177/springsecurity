@@ -14,13 +14,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
-    public static final String RESOURCE_ID = "authorizationServer";
-
-    /*@Override
-    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-        super.configure(resources);
-    }*/
-
     @Override
     public void configure(HttpSecurity http) throws Exception {
         //只有/me端点作为资源服务器的资源
@@ -30,14 +23,4 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .anyRequest().authenticated()
         ;
     }
-
-    /*@Override
-    public void configure(ResourceServerSecurityConfigurer resources)
-            throws Exception {
-        RemoteTokenServices tokenService = new RemoteTokenServices();
-        tokenService.setCheckTokenEndpointUrl("http://localhost:8081/oauth/check_token");
-        tokenService.setClientId("client-for-server");
-        tokenService.setClientSecret("client-for-server");
-        resources.tokenServices(tokenService);
-    }*/
 }

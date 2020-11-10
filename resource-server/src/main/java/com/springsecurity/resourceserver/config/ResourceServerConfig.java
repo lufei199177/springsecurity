@@ -18,11 +18,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     public static final String RESOURCE_ID = "authorizationServer";
 
-    /*@Override
-    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-        super.configure(resources);
-    }*/
-
     @Override
     public void configure(HttpSecurity http) throws Exception {
         //只有/me端点作为资源服务器的资源
@@ -37,8 +32,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(ResourceServerSecurityConfigurer resources)
             throws Exception {
         String userInfoEndpointUrl = "http://localhost:8081/userInfo";
-        String clientId = "client-for-server";
-        UserInfoTokenServices tokenService = new UserInfoTokenServices(userInfoEndpointUrl, clientId);
+        //String clientId = null;
+        UserInfoTokenServices tokenService = new UserInfoTokenServices(userInfoEndpointUrl, null);
         resources.tokenServices(tokenService);
     }
 }

@@ -1,7 +1,7 @@
 package com.springsecurity.oauthclient.controller;
 
-import com.springsecurity.oauthclient.config.AuthConfig;
 import com.springsecurity.oauthclient.model.AuthToken;
+import com.springsecurity.oauthclient.util.AuthUtil;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -32,16 +31,11 @@ public class TestController {
 
     @GetMapping("/test")
     public String test(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String sessionId = null;
-        for (Cookie c : request.getCookies()) {
-            if ("user_info".equals(c.getName())) {
-                sessionId = c.getValue();
-                break;
-            }
-        }
-        AuthToken authToken = AuthConfig.getToken(sessionId);
+        Principal principal = request.getUserPrincipal();
+        String userName = principal.getName();
+        AuthToken authToken = AuthUtil.getToken(userName);
         if (authToken == null) {
-            AuthConfig.addUrl(sessionId, "/test");
+            AuthUtil.addUrl(userName, "/test");
             response.sendRedirect("/authorize");
             return null;
         }
@@ -52,7 +46,7 @@ public class TestController {
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(httpHeaders);
 
         RestTemplate restTemplate = new RestTemplate();
-        String sb = AuthConfig.resourceUri;
+        String sb = AuthUtil.resourceUri;
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(sb, HttpMethod.GET, httpEntity, String.class);
 

@@ -1,12 +1,11 @@
 package com.springsecurity.oauthserver.config;
 
+import com.springsecurity.oauthserver.component.MyClientDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 
 /**
  * @author lufei
@@ -18,11 +17,12 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private MyClientDetailsService myClientDetailsService;
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
+        clients.withClientDetails(this.myClientDetailsService);
+        /*clients.inMemory()
                 //client-id
                 .withClient("client-for-server")
                 //client-server
@@ -42,14 +42,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 //.authorities("ROLE_CLIENT")
                 //该client可以访问的资源范围
                 .scopes("profile", "email", "phone", "aaa")
-        //自动批准的范围
-        //.autoApprove("profile")
+                //自动批准的范围
+                //.autoApprove("profile")*/
         ;
-    }
-
-    @Override
-    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        // 配置前来验证token的client需要拥有的角色
-        security.checkTokenAccess("hasAuthority('ROLE_TRUSTED_CLIENT')");
     }
 }

@@ -1,7 +1,8 @@
 package com.springsecurity.oauthclient.controller;
 
-import com.springsecurity.oauthclient.config.AuthConfig;
+import com.springsecurity.oauthclient.model.AuthClient;
 import com.springsecurity.oauthclient.model.AuthToken;
+import com.springsecurity.oauthclient.util.AuthUtil;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -9,10 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * @author lufei
@@ -24,58 +25,49 @@ public class AuthController {
 
     @GetMapping("/authorize")
     public void authorize(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Cookie cookie = null;
-        for (Cookie c : request.getCookies()) {
-            if ("user_info".equals(c.getName())) {
-                cookie = c;
-                break;
+        String name = request.getUserPrincipal().getName();
+        AuthClient authClient = AuthUtil.AUTH_CLIENT_MAP.get(name);
+        if (authClient == null) {
+            try (OutputStream os = response.getOutputStream()) {
+                os.write("未进行授权".getBytes("GBK"));
+                os.flush();
             }
+        } else {
+            String url = AuthUtil.authorizationUri + "?client_id=" + authClient.getClientId() + "&redirect_uri="
+                    + AuthUtil.redirectUri + "&response_type=code";
+            response.sendRedirect(url);
         }
-        if (cookie == null) {
-            cookie = new Cookie("user_info", request.getSession().getId());
-            response.addCookie(cookie);
-        }
-        String url = AuthConfig.authorizationUri + "?client_id=" + AuthConfig.clientId + "&redirect_uri=" + AuthConfig.redirectUri + "&response_type=code";
-        response.sendRedirect(url);
     }
 
     @GetMapping("/login/oauth2/code/authorization")
     public void codeAuthorization(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String userName = request.getUserPrincipal().getName();
+        AuthClient authClient = AuthUtil.AUTH_CLIENT_MAP.get(userName);
 
         String code = request.getParameter("code");
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("code", code);
-        parameters.add("grant_type", AuthConfig.authorizationGrantType);
-        parameters.add("scope", AuthConfig.scope);
-        parameters.add("redirect_uri", AuthConfig.redirectUri);
+        parameters.add("grant_type", AuthUtil.authorizationGrantType);
+        parameters.add("scope", AuthUtil.scope);
+        parameters.add("redirect_uri", AuthUtil.redirectUri);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         String cookie = request.getHeader("cookie");
         httpHeaders.add("Cookie", cookie);
         httpHeaders.set("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        httpHeaders.setBasicAuth(AuthConfig.clientId, AuthConfig.clientSecret);
+        httpHeaders.setBasicAuth(authClient.getClientId(), authClient.getClientSecret());
 
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(parameters, httpHeaders);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<AuthToken> responseEntity = restTemplate.exchange(AuthConfig.tokenUri, HttpMethod.POST, httpEntity, AuthToken.class);
+        ResponseEntity<AuthToken> responseEntity = restTemplate.exchange(AuthUtil.tokenUri, HttpMethod.POST, httpEntity, AuthToken.class);
         AuthToken authToken = responseEntity.getBody();
         if (authToken != null) {
             authToken.setCreateTime(System.currentTimeMillis());
 
-            String sessionId = null;
-            for (Cookie c : request.getCookies()) {
-                if ("user_info".equals(c.getName())) {
-                    sessionId = c.getValue();
-                    break;
-                }
-            }
-
-            if (sessionId != null) {
-                AuthConfig.addToken(sessionId, authToken);
-                String url = AuthConfig.getUrl(sessionId);
-                response.sendRedirect(url);
-            }
+            AuthUtil.addToken(userName, authToken);
+            String url = AuthUtil.getUrl(userName);
+            response.sendRedirect(url);
         }
     }
 
