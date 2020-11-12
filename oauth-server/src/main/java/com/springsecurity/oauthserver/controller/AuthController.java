@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author lufei
@@ -48,13 +45,16 @@ public class AuthController {
     @GetMapping("/addClientDetail/{clientId}/{clientSecret}")
     public String addClientDetail(@PathVariable("clientId") String clientId, @PathVariable("clientSecret") String clientSecret) {
         String[] scopes = {"profile", "email", "phone", "aaa"};
+        List<String> grantTypes = Arrays.asList("authorization_code", "password", "client_credentials");
+        Set<String> set = new HashSet<>();
+        set.add("http://localhost:8080/login/oauth2/code/authorization");
 
         BaseClientDetails clientDetails = new BaseClientDetails();
         clientDetails.setClientId(clientId);
         clientDetails.setClientSecret(this.passwordEncoder.encode(clientSecret));
-        clientDetails.setRegisteredRedirectUri(Collections.singleton("http://localhost:8080/login/oauth2/code/authorization"));
+        clientDetails.setRegisteredRedirectUri(set);
         clientDetails.setScope(Arrays.asList(scopes));
-        clientDetails.setAuthorizedGrantTypes(Collections.singleton("authorization_code"));
+        clientDetails.setAuthorizedGrantTypes(grantTypes);
 
         this.myClientDetailsService.addClientDetails(clientId, clientDetails);
         return "添加成功！";

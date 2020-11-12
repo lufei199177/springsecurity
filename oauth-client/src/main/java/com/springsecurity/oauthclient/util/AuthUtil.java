@@ -2,6 +2,7 @@ package com.springsecurity.oauthclient.util;
 
 import com.springsecurity.oauthclient.model.AuthClient;
 import com.springsecurity.oauthclient.model.AuthToken;
+import com.springsecurity.oauthclient.model.GrantTypeEnum;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class AuthUtil {
     public static final Map<String, AuthClient> AUTH_CLIENT_MAP = new HashMap<>();
 
     static {
-        AuthClient authClient = new AuthClient("clientId001", "clientSecret001");
+        AuthClient authClient = new AuthClient("clientId001", "clientSecret001", GrantTypeEnum.AUTHORIZATION_CODE);
         AUTH_CLIENT_MAP.put("user", authClient);
     }
 

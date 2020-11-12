@@ -32,7 +32,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 //client-server
                 .secret(this.passwordEncoder.encode("client-for-server"))
                 //授权类型
-                .authorizedGrantTypes("authorization_code", "implicit")
+                .authorizedGrantTypes("authorization_code", "implicit","password","client_credentials")
                 //token有效时间
                 .accessTokenValiditySeconds(7200)
                 //token刷新时间
@@ -53,6 +53,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     /**
      * 使用jwt，如果不用，则把这个方法删掉，使用默认配置
+     *
      * @param endpoints
      * @throws Exception
      */
