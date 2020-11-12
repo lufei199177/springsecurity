@@ -25,8 +25,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         //只有/me端点作为资源服务器的资源
         http.requestMatchers().antMatchers("/me", "/userInfo")
-                .and()
-                .authorizeRequests()
+                .and().authorizeRequests()
+                //.antMatchers("/me", "/userInfo").access("#oauth2.hasAnyScope('profile')")
                 .anyRequest().authenticated()
         ;
     }

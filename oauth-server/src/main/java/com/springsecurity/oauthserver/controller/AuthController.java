@@ -36,6 +36,7 @@ public class AuthController {
             map.put("credentials", user.getCredentials());
             map.put("oAuth2Request", user.getOAuth2Request());
             map.put("userAuthentication", user.getUserAuthentication());
+            map.put("scopes", user.getOAuth2Request().getScope());
         } else {
             map.put("error", "invalid token");
         }
