@@ -54,32 +54,22 @@ public class AuthController {
                 parameters.add("username", authClient.getUserName());
                 parameters.add("password", authClient.getPassword());
 
-                HttpHeaders httpHeaders = new HttpHeaders();
-                httpHeaders.set("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-                httpHeaders.setBasicAuth(authClient.getClientId(), authClient.getClientSecret());
+                HttpHeaders httpHeaders = this.createHttpHeaders(authClient);
 
                 HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(parameters, httpHeaders);
 
-                RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<AuthToken> responseEntity = restTemplate.exchange(AuthUtil.tokenUri, HttpMethod.POST, httpEntity, AuthToken.class);
-
-                this.handleToken(responseEntity.getBody(), name, response);
+                this.handleToken(httpEntity, name, response);
             } else if (authClient.getGrantTypeEnum().name().equals(GrantTypeEnum.CLIENT_CREDENTIALS.name())) {
                 MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
                 parameters.add("client_id", authClient.getClientId());
                 parameters.add("client_secret", authClient.getClientSecret());
                 parameters.add("grant_type", GrantTypeEnum.CLIENT_CREDENTIALS.getCode());
 
-                HttpHeaders httpHeaders = new HttpHeaders();
-                httpHeaders.set("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-                httpHeaders.setBasicAuth(authClient.getClientId(), authClient.getClientSecret());
+                HttpHeaders httpHeaders = this.createHttpHeaders(authClient);
 
                 HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(parameters, httpHeaders);
 
-                RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<AuthToken> responseEntity = restTemplate.exchange(AuthUtil.tokenUri, HttpMethod.POST, httpEntity, AuthToken.class);
-
-                this.handleToken(responseEntity.getBody(), name, response);
+                this.handleToken(httpEntity, name, response);
             }
         }
     }
@@ -97,21 +87,27 @@ public class AuthController {
         parameters.add("scope", AuthUtil.scope);
         parameters.add("redirect_uri", AuthUtil.redirectUri);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
+        HttpHeaders httpHeaders = this.createHttpHeaders(authClient);
         String cookie = request.getHeader("cookie");
         httpHeaders.add("Cookie", cookie);
-        httpHeaders.set("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        httpHeaders.setBasicAuth(authClient.getClientId(), authClient.getClientSecret());
 
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(parameters, httpHeaders);
 
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<AuthToken> responseEntity = restTemplate.exchange(AuthUtil.tokenUri, HttpMethod.POST, httpEntity, AuthToken.class);
-        AuthToken authToken = responseEntity.getBody();
-        this.handleToken(authToken, userName, response);
+        this.handleToken(httpEntity, userName, response);
     }
 
-    private void handleToken(AuthToken authToken, String userName, HttpServletResponse response) throws IOException {
+    private HttpHeaders createHttpHeaders(AuthClient authClient) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        httpHeaders.setBasicAuth(authClient.getClientId(), authClient.getClientSecret());
+        return httpHeaders;
+    }
+
+    private void handleToken(HttpEntity httpEntity, String userName, HttpServletResponse response) throws IOException {
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<AuthToken> responseEntity = restTemplate.exchange(AuthUtil.tokenUri, HttpMethod.POST, httpEntity,
+                AuthToken.class);
+        AuthToken authToken = responseEntity.getBody();
         if (authToken != null) {
             authToken.setCreateTime(System.currentTimeMillis());
 
