@@ -30,7 +30,8 @@ public class MyUserInfoTokenServices extends UserInfoTokenServices {
 
         Authentication token = oAuth2Authentication.getUserAuthentication();
         Map<String, Object> map = (Map<String, Object>) token.getDetails();
-        List<String> scopeList = (List<String>) map.get("scopes");
+        Map<String, Object> oAuth2RequestMap = (Map<String, Object>) map.get("oAuth2Request");
+        List<String> scopeList = (List<String>) oAuth2RequestMap.get("scope");
         Set<String> scopes = new HashSet<>(scopeList);
         OAuth2Request request = oAuth2Request.narrowScope(scopes);
         return new OAuth2Authentication(request, token);
